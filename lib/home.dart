@@ -42,36 +42,91 @@ class _HomeState extends State<Home> {
             }
             if (snapshot.hasData) {
               taskList = snapshot.data!;
-              return ListView.builder(
-                itemCount: taskList.length,
-                itemBuilder: (context, index) {
-                  Task task = taskList[index];
-                  return ListTile(
-                    leading: Checkbox(
-                      value: task.isChecked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          taskList[index].isChecked = value!;
-                        });
-                      },
-                    ),
-                    title: Text(task.taskTitle),
-                    subtitle: Text(
-                        DateTime.fromMillisecondsSinceEpoch(task.dateTime)
-                            .toString()),
-                    trailing: IconButton(
-                      onPressed: () async {
-                        if (task.id != null) {
-                          await TaskProvider.instance.delete(task.id!);
-                        }
-                        setState(() {});
-                      },
-                      icon: Icon(
-                        Icons.delete,
+              return Column(
+                children: [
+                  Container(
+                    height: 150,
+                    color: Colors.blue,
+                    child: Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '${now.day}',
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '${(DateFormat('MMMM').format(now).substring(0, 3))}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${now.year}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text(
+                            '${(DateFormat('EEEE').format(now))}',
+                            style: TextStyle(
+                              fontSize: 22,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: taskList.length,
+                      itemBuilder: (context, index) {
+                        Task task = taskList[index];
+                        return ListTile(
+                          leading: Checkbox(
+                            value: taskList[index].isChecked,
+                            onChanged: (bool? value) async {
+                              // taskList[index].isChecked = !taskList[index].isChecked;
+                            },
+
+                          ),
+                          title: Text(task.taskTitle),
+                          subtitle: Text(
+                            DateFormat.yMMMMEEEEd().format(
+                                DateTime.fromMillisecondsSinceEpoch(task.dateTime)),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () async {
+                              if (task.id != null) {
+                                await TaskProvider.instance.delete(task.id!);
+                              }
+                              setState(() {});
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
             }
             return Center(
@@ -83,61 +138,6 @@ class _HomeState extends State<Home> {
             );
           },
         ),
-
-        /*Column(
-          children: [
-            Container(
-              height: 150,
-              color: Colors.blue,
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          '${now.day}',
-                          style: TextStyle(
-                            fontSize: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${(DateFormat('MMMM').format(now).substring(0, 3))}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Text(
-                              '${now.year}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Text(
-                      '${(DateFormat('EEEE').format(now))}',
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-          ],
-        ),*/
 
         drawer: Drawer(
           child: ListView(
@@ -272,11 +272,14 @@ class _HomeState extends State<Home> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      TaskProvider.instance.insert(Task(
+                                      TaskProvider.instance.insert(
+                                        Task(
                                           taskTitle: taskController.text,
                                           dateTime: selectedDate!
                                               .millisecondsSinceEpoch,
-                                          isChecked: false));
+                                          isChecked: false,
+                                        ),
+                                      );
                                       Navigator.of(context).pop();
                                       setState(() {});
                                     },

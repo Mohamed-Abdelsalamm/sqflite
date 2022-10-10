@@ -25,8 +25,8 @@ class TaskProvider {
           await db.execute('''
 create table $taskTable ( 
   $columnId integer primary key autoincrement, 
-  $columnTaskTitle text not null,
-  $columnIsChecked integer not null,
+  $columnTaskTitle integer not null,
+  $columnDateTime integer not null,
   $columnIsChecked integer not null
   )
 ''');
@@ -53,6 +53,11 @@ create table $taskTable (
 
   Future<int> delete(int id) async {
     return await db.delete(taskTable, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<int> update(Task task) async {
+    return await db.update(taskTable, task.toMap(),
+        where: '$columnId = ?', whereArgs: [task.id]);
   }
 
   Future close() async => db.close();
