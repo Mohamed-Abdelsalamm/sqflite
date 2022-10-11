@@ -17,8 +17,6 @@ class _HomeState extends State<Home> {
   final now = DateTime.now();
   TextEditingController taskController = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  bool isChecked = false;
-  Color color = Colors.grey;
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +246,17 @@ class _HomeState extends State<Home> {
                                 firstDate: DateTime(2015),
                                 lastDate: DateTime(2050),
                               );
-                              setState(() {});
+                              setState(() {
+                                dateController
+                                  ..text =
+                                      DateFormat.yMMMd().format(selectedDate!)
+                                  ..selection = TextSelection.fromPosition(
+                                    TextPosition(
+                                      offset: dateController.text.length,
+                                      affinity: TextAffinity.upstream,
+                                    ),
+                                  );
+                              });
                             },
                             readOnly: true,
                             decoration: InputDecoration(
