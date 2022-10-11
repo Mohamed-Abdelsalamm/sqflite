@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:week10/database/taskprovider.dart';
@@ -17,6 +18,7 @@ class _HomeState extends State<Home> {
   TextEditingController taskController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   bool isChecked = false;
+  Color color = Colors.grey;
 
   @override
   Widget build(BuildContext context) {
@@ -98,28 +100,39 @@ class _HomeState extends State<Home> {
                       itemCount: taskList.length,
                       itemBuilder: (context, index) {
                         Task task = taskList[index];
-                        return ListTile(
-                          leading: Checkbox(
-                            value: taskList[index].isChecked,
-                            onChanged: (bool? value) async {
-                              // taskList[index].isChecked = !taskList[index].isChecked;
-                            },
-
-                          ),
-                          title: Text(task.taskTitle),
-                          subtitle: Text(
-                            DateFormat.yMMMMEEEEd().format(
-                                DateTime.fromMillisecondsSinceEpoch(task.dateTime)),
-                          ),
-                          trailing: IconButton(
-                            onPressed: () async {
-                              if (task.id != null) {
-                                await TaskProvider.instance.delete(task.id!);
-                              }
-                              setState(() {});
-                            },
-                            icon: Icon(
-                              Icons.delete,
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            tileColor: taskList[index].isChecked == true
+                                ? Colors.black26
+                                : null,
+                            leading: Checkbox(
+                              value: taskList[index].isChecked,
+                              onChanged: (bool? value) async {
+                                taskList[index].isChecked = value!;
+                                await TaskProvider.instance.update(
+                                  taskList[index],
+                                );
+                                setState(() {});
+                              },
+                            ),
+                            title: Text(task.taskTitle),
+                            subtitle: Text(
+                              DateFormat.yMMMMEEEEd().format(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    task.dateTime),
+                              ),
+                            ),
+                            trailing: IconButton(
+                              onPressed: () async {
+                                if (task.id != null) {
+                                  await TaskProvider.instance.delete(task.id!);
+                                }
+                                setState(() {});
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                              ),
                             ),
                           ),
                         );
@@ -138,7 +151,6 @@ class _HomeState extends State<Home> {
             );
           },
         ),
-
         drawer: Drawer(
           child: ListView(
             children: [
