@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:week10/database/taskprovider.dart';
@@ -114,7 +113,9 @@ class _HomeState extends State<Home> {
                                 setState(() {});
                               },
                             ),
-                            title: Text(task.taskTitle),
+                            title: Text(
+                              task.taskTitle,
+                            ),
                             subtitle: Text(
                               DateFormat.yMMMMEEEEd().format(
                                 DateTime.fromMillisecondsSinceEpoch(
